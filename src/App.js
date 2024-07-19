@@ -3,10 +3,13 @@ import Container from 'react-bootstrap/Container';
 import Nav from 'react-bootstrap/Nav';
 import Navbar from 'react-bootstrap/Navbar';
 import shoebg from './img/bg.png';
-import {useState} from 'react';
+import {useState, useEffect} from 'react';
 import data from './data.js';
 import { Routes, Route, Link, useNavigate, Outlet, useParams} from 'react-router-dom';
+import styled from 'styled-components';
 
+
+//styled-componennts : 스타일이 다른 js 파일로 오염되지 않음 
 // boostrap 써도 커스텀 가능함
 // 길고 복잡한건 다른 js 파일에 빼둘 수 있음 
 // 페이지 이동도와주는 useNavigate()
@@ -78,14 +81,35 @@ function Shoe(props) {
 // 2. 누가 /detail 접속하면 그 컴포넌트 보여줌
 // 길기 때문에 라이브러리 씀 react-router-dom 
 
+// useEffect 언제쓸까
+// useEffect 안에 있는 코드는 html 렌더링 후에 동작함
+// 오래걸리는 연산 / 서버에서 데이터 가져오는 작업 / 타이머 장착 이런거 html 보여주는거보다 덜 중요한 것들 
 function Detail(props) {
 
   let {id} = useParams();
   let found = props.shoes.find(el=>el.id == id);
+  let [alert,setalert] = useState(true)
+  let [cnt,setCnt] = useState(0);
+
+  useEffect(()=>{
+    let a = setTimeout(()=>{setalert(false)},2000)
+    return () =>{
+      // 기존타이머는 제거해주세요
+      clearTimeout(a)
+    }
+  },[cnt]) 
+  // useeffect 동작 전에 실행되는 return 
+
+
+  
   console.log(found);
   console.log(typeof(id));
   return(
     <div className="container">
+      {
+        alert == true ? <div className='alert alert-warning'>2초 이내 구입시 할인</div> : null
+      }
+      <button onClick={()=>{setCnt(cnt+1)}}>버튼</button>
       <div className="row">
         <div className="col-md-6">
           <img src= {`https://codingapple1.github.io/shop/shoes${Number(id) + 1}.jpg`} width="100%" />
