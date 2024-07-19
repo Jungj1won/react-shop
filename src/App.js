@@ -5,7 +5,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import shoebg from './img/bg.png';
 import {useState} from 'react';
 import data from './data.js';
-import { Routes, Route, Link, useNavigate, Outlet} from 'react-router-dom';
+import { Routes, Route, Link, useNavigate, Outlet, useParams} from 'react-router-dom';
 
 // boostrap 써도 커스텀 가능함
 // 길고 복잡한건 다른 js 파일에 빼둘 수 있음 
@@ -43,11 +43,7 @@ function App() {
               <Shoe shoes = {shoes} ></Shoe>
             </div>
           </div> }/>
-        <Route path = "/detail" element = {<Detail/>}/>
-        <Route path = "/about" element = {<About/>}>
-          <Route path = "member" element = {<div>멤버이름</div>}/>
-          <Route path = "location" element = {<div>위치정보</div>}/>
-        </Route>
+        <Route path = "/detail/:id" element = {<Detail shoes = {shoes}/>}/>
       </Routes>
 
 
@@ -82,29 +78,25 @@ function Shoe(props) {
 // 2. 누가 /detail 접속하면 그 컴포넌트 보여줌
 // 길기 때문에 라이브러리 씀 react-router-dom 
 
-function Detail() {
+function Detail(props) {
+
+  let {id} = useParams();
+  let found = props.shoes.find(el=>el.id == id);
+  console.log(found);
+  console.log(typeof(id));
   return(
     <div className="container">
       <div className="row">
         <div className="col-md-6">
-          <img src="https://codingapple1.github.io/shop/shoes1.jpg" width="100%" />
+          <img src= {`https://codingapple1.github.io/shop/shoes${Number(id) + 1}.jpg`} width="100%" />
         </div>
         <div className="col-md-6">
-          <h4 className="pt-5">상품명</h4>
-          <p>상품설명</p>
-          <p>120000원</p>
+          <h4 className="pt-5">{found.title}</h4>
+          <p>{found.content}</p>
+          <p>{found.price}</p>
           <button className="btn btn-danger">주문하기</button> 
         </div>
       </div>
     </div> 
-  )
-}
-
-function About() {
-  return (
-    <div>
-      <h4>회사정보</h4>
-      <Outlet></Outlet>
-    </div>
   )
 }
